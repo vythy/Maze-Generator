@@ -17,6 +17,7 @@ using namespace std;
 
 // helper function declarations
 bool check(MovementVector &current, int height, int width, vector<vector<bool>> &visited);
+bool has_wall(MovementVector &current, string direction);
 void convert(vector<vector<Node>> &in, vector<vector<char>> &out, int height, int width);
 vector<MovementVector> floodfill(MovementVector current, int height, int width, vector<vector<bool>> &visited);
 
@@ -75,13 +76,13 @@ void Maze::generate() {
 
             // this is kinda messy ngl
             // checks direction explored to decide how to break down walls
-            if (choose.direction & (1 << 0)) {
+            if ( has_wall(choose, "left") ) {
                 nodes[top.y][top.x].carve_left( nodes[choose.y][choose.x] );
-            } else if (choose.direction & (1 << 1)) {
+            } else if ( has_wall(choose, "bottom") ) {
                 nodes[top.y][top.x].carve_bottom( nodes[choose.y][choose.x] );
-            } else if (choose.direction & (1 << 2)) {
+            } else if ( has_wall(choose, "right") ) {
                 nodes[top.y][top.x].carve_right( nodes[choose.y][choose.x] );
-            } else if (choose.direction & (1 << 3)) {
+            } else if ( has_wall(choose, "top") ) {
                 nodes[top.y][top.x].carve_top( nodes[choose.y][choose.x] );
             }
 
@@ -98,6 +99,16 @@ void Maze::generate() {
 bool check(MovementVector &current, int height, int width, vector<vector<bool>> &visited) {
     return (current.x >= 0 && current.y >= 0 && current.x < width && current.y < height) 
             && (!visited[current.y][current.x]);
+}
+
+// simplifies bitflag check for walls
+bool has_wall(MovementVector &current, string direction) {
+    int bit_check = 1;
+    if (direction == "top") bit_check <<= 3;
+    else if (direction == "right") bit_check <<= 2;
+    else if (direction == "bottom") bit_check <<= 1;
+
+    return (current.direction & bit_check);
 }
 
 // helper function to conver the maze data structure into an ascii grid
@@ -146,7 +157,6 @@ void Maze::print() {
     for (int i = 0; i < height*2+1; ++i) {
         for (int j = 0; j < width*2+1; ++j) {
             cout << out[i][j];
-            
             #ifdef _WIN32
             Sleep(1);
             #else 
