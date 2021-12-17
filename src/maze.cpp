@@ -22,6 +22,7 @@ void set_adj_walls(vector<vector<Node>> &in, vector<vector<char>> &out, int i, i
 void convert(vector<vector<Node>> &in, vector<vector<char>> &out, int height, int width);
 void carve(MovementVector &prev, MovementVector &next, vector<vector<Node>> &nodes);
 vector<MovementVector> floodfill(MovementVector current, int height, int width, vector<vector<bool>> &visited);
+MovementVector choose_direction(vector<MovementVector> &choices);
 
 // legal movement directions for floodfill/neighbor search
 // left, down, right, up
@@ -70,8 +71,7 @@ void Maze::generate() {
             if (candidates.empty()) break;
 
             // choose a random neighbor to explore
-            int chooseIndex = rand() % candidates.size();
-            MovementVector choose = candidates[chooseIndex];
+            MovementVector choose = choose_direction(candidates);
 
             // add the new node to backtrack stack
             stck.push(choose);
@@ -164,6 +164,11 @@ vector<MovementVector> floodfill(MovementVector current, int height, int width, 
     return ret;
 }
 
+// choose a random direction to go to from legal choices
+MovementVector choose_direction(vector<MovementVector> &choices) {
+    return ( choices[ rand() % choices.size() ] );
+}
+
 void Maze::print() {
     cout << "\n\n";
     // looping through char matrix to output
@@ -179,6 +184,5 @@ void Maze::print() {
         }
         cout << "\n";
     }
-
     cout << "\n\n";
 }
