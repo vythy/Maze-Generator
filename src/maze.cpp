@@ -19,6 +19,7 @@ using namespace std;
 bool check(MovementVector &current, int height, int width, vector<vector<bool>> &visited);
 bool has_wall(MovementVector &current, string direction);
 void convert(vector<vector<Node>> &in, vector<vector<char>> &out, int height, int width);
+void carve(MovementVector &prev, MovementVector &next, vector<vector<Node>> &nodes);
 vector<MovementVector> floodfill(MovementVector current, int height, int width, vector<vector<bool>> &visited);
 
 // legal movement directions for floodfill/neighbor search
@@ -74,17 +75,7 @@ void Maze::generate() {
             // add the new node to backtrack stack
             stck.push(choose);
 
-            // this is kinda messy ngl
-            // checks direction explored to decide how to break down walls
-            if ( has_wall(choose, "left") ) {
-                nodes[top.y][top.x].carve_left( nodes[choose.y][choose.x] );
-            } else if ( has_wall(choose, "bottom") ) {
-                nodes[top.y][top.x].carve_bottom( nodes[choose.y][choose.x] );
-            } else if ( has_wall(choose, "right") ) {
-                nodes[top.y][top.x].carve_right( nodes[choose.y][choose.x] );
-            } else if ( has_wall(choose, "top") ) {
-                nodes[top.y][top.x].carve_top( nodes[choose.y][choose.x] );
-            }
+            carve(top, choose, nodes);
 
             // make most recently visited node the new one being considered
             top = choose;
@@ -109,6 +100,21 @@ bool has_wall(MovementVector &current, string direction) {
     else if (direction == "bottom") bit_check <<= 1;
 
     return (current.direction & bit_check);
+}
+
+// chooses the right wall to carve from coords direction bitflag
+void carve(MovementVector &prev, MovementVector &next, vector<vector<Node>> &nodes) {
+    // this is kinda messy ngl
+    // checks direction explored to decide how to break down walls
+    if ( has_wall(next, "left") ) {
+        nodes[prev.y][prev.x].carve_left( nodes[next.y][next.x] );
+    } else if ( has_wall(next, "bottom") ) {
+        nodes[prev.y][prev.x].carve_bottom( nodes[next.y][next.x] );
+    } else if ( has_wall(next, "right") ) {
+        nodes[prev.y][prev.x].carve_right( nodes[next.y][next.x] );
+    } else if ( has_wall(next, "top") ) {
+        nodes[prev.y][prev.x].carve_top( nodes[next.y][next.x] );
+    }
 }
 
 // helper function to conver the maze data structure into an ascii grid
