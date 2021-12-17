@@ -1,3 +1,3 @@
 # Maze-Generator
 
-yeah
+Build by running ```make```
