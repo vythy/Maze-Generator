@@ -18,7 +18,7 @@ int main() {
         int height = getInt("\nHow many units tall would you like the maze to be?: ");
         int width = getInt("How units wide would you like the maze to be?: ");
         
-        // using anonymous object to create a print a new maze quickly to be discarded
+        // using anonymous object to create a print and new maze quickly to be discarded
         Maze(height, width).print();
     }
 
