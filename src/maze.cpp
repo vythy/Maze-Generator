@@ -146,7 +146,12 @@ void Maze::print() {
     for (int i = 0; i < height*2+1; ++i) {
         for (int j = 0; j < width*2+1; ++j) {
             cout << out[i][j];
+            
+            #ifdef _WIN32
             Sleep(1);
+            #else 
+            usleep(1000);
+            #endif
         }
         cout << "\n";
     }
