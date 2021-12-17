@@ -18,6 +18,7 @@ using namespace std;
 // helper function declarations
 bool check(MovementVector &current, int height, int width, vector<vector<bool>> &visited);
 bool has_wall(MovementVector &current, string direction);
+void set_adj_walls(vector<vector<Node>> &in, vector<vector<char>> &out, int i, int j);
 void convert(vector<vector<Node>> &in, vector<vector<char>> &out, int height, int width);
 void carve(MovementVector &prev, MovementVector &next, vector<vector<Node>> &nodes);
 vector<MovementVector> floodfill(MovementVector current, int height, int width, vector<vector<bool>> &visited);
@@ -102,6 +103,7 @@ bool has_wall(MovementVector &current, string direction) {
     return (current.direction & bit_check);
 }
 
+
 // chooses the right wall to carve from coords direction bitflag
 void carve(MovementVector &prev, MovementVector &next, vector<vector<Node>> &nodes) {
     // this is kinda messy ngl
@@ -119,18 +121,24 @@ void carve(MovementVector &prev, MovementVector &next, vector<vector<Node>> &nod
 
 // helper function to conver the maze data structure into an ascii grid
 void convert(vector<vector<Node>> &in, vector<vector<char>> &out, int height, int width) {
-    // each node occupies a 3x3 plus sign in the output matrix
-    // therefore center of each 3x3 is defined as the point 2i+1, 2j+1
-    // add 1 in each direction and decide whether a wall should be placed
+    // Go through every single node and create its individual grid for the output matrix
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j < width; ++j) {
-            out[i*2+1][j*2] = ( in[i][j].check_left() ) ? '#' : ' ';
-            out[i*2+1][j*2+2] = ( in[i][j].check_right() ) ? '#' : ' ';
-            out[i*2][j*2+1] = ( in[i][j].check_top() ) ? '#' : ' ';
-            out[i*2+2][j*2+1] = ( in[i][j].check_bottom() ) ? '#' : ' ';
-            out[i*2+1][j*2+1] = ' ';
+            set_adj_walls(in, out, i, j);
         }
     }
+}
+
+// each node occupies a 3x3 plus sign in the output matrix
+// therefore center of each 3x3 is defined as the point 2i+1, 2j+1
+// add 1 in each direction and decide whether a wall should be placed
+// sets walls in the plus sign pattern
+void set_adj_walls(vector<vector<Node>> &in, vector<vector<char>> &out, int i, int j) {
+    out[i*2+1][j*2] = ( in[i][j].check_left() ) ? '#' : ' ';
+    out[i*2+1][j*2+2] = ( in[i][j].check_right() ) ? '#' : ' ';
+    out[i*2][j*2+1] = ( in[i][j].check_top() ) ? '#' : ' ';
+    out[i*2+2][j*2+1] = ( in[i][j].check_bottom() ) ? '#' : ' ';
+    out[i*2+1][j*2+1] = ' ';
 }
 
 // helper function used to generate the potential neighbors to explore
