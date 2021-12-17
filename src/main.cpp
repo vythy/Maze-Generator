@@ -10,7 +10,7 @@
 using namespace std;
 
 int getInt(string prompt);
-int getChar(string prompt);
+char getChar(string prompt);
 
 int main() {
     cout << "\nWelcome to Maze generator!\n";
@@ -29,7 +29,7 @@ int main() {
     return 0;
 }
 
-int getChar(string prompt) {
+char getChar(string prompt) {
     cout << prompt;
     char temp; cin >> temp;
     return temp;
